@@ -10,21 +10,23 @@ import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken }
 import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, serverTimestamp, setDoc, getDoc, query, orderBy, writeBatch } from 'firebase/firestore';
 
 // --- Firebase Config ---
-// @ts-ignore
+// 請確認這些設定與你的 Firebase Console 一致
 const firebaseConfig = {
-    apiKey: "AIzaSyCg9qkjy-snxi4OM4cPx4DV30N1ih8Jegg",
-    authDomain: "winii-reservation-system.firebaseapp.com",
-    projectId: "winii-reservation-system",
-    storageBucket: "winii-reservation-system.firebasestorage.app",
-    messagingSenderId: "612418509774",
-    appId: "1:612418509774:web:86789dabce1e57e439e99f",
-    measurementId: "G-VS6Y3BZYMP"
-  }
+  apiKey: "AIzaSyCg9qkjy-snxi4OM4cPx4DV30N1ih8Jegg",
+  authDomain: "winii-reservation-system.firebaseapp.com",
+  projectId: "winii-reservation-system",
+  storageBucket: "winii-reservation-system.firebasestorage.app",
+  messagingSenderId: "612418509774",
+  appId: "1:612418509774:web:86789dabce1e57e439e99f",
+  measurementId: "G-VS6Y3BZYMP"
+};
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-// @ts-ignore
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+// 修正重點 1: 直接指定你的 App ID，不再依賴環境變數
+const appId = 'winii-official-production';
 
 // --- Theme Colors ---
 // Hair Orange: #FA8C76
@@ -225,7 +227,7 @@ export default function App() {
   const [deletedAppointments, setDeletedAppointments] = useState<Appointment[]>([]);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [slotNote, setSlotNote] = useState(''); 
-  const [collapsedMonths, setCollapsedMonths] = useState<string[]>([]); // New state for collapsed months
+  const [collapsedMonths, setCollapsedMonths] = useState<string[]>([]); 
   
   // Dynamic Options & Prompts
   const [speciesOpts, setSpeciesOpts] = useState<string[]>(DEFAULT_SPECIES);
@@ -243,7 +245,7 @@ export default function App() {
   const [msgModalOpen, setMsgModalOpen] = useState(false);
   const [msgContent, setMsgContent] = useState('');
   
-  // Delete State (Unified for App and Slot)
+  // Delete State
   const [deleteTarget, setDeleteTarget] = useState<{ id: string, type: 'app' | 'slot' } | null>(null);
   const [deleteConfirmModalOpen, setDeleteConfirmModalOpen] = useState(false);
 
@@ -252,7 +254,7 @@ export default function App() {
   
   // Calendar View State
   const [calDate, setCalDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date()); // New state for selected date in calendar
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date()); 
 
   // Admin Editing State
   const [dateEditModalOpen, setDateEditModalOpen] = useState(false);
@@ -324,15 +326,11 @@ export default function App() {
     setToast({ msg, type });
   };
 
-  // --- Authentication ---
+  // --- Authentication (修正重點 2: 移除客製化 Token 檢查，使用匿名登入) ---
   useEffect(() => {
     const initAuth = async () => {
       try {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-          await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
+        await signInAnonymously(auth);
       } catch (e) {
         console.error("Auth failed", e);
         try { await signInAnonymously(auth); } catch (e2) { setAuthError(true); }
@@ -537,8 +535,6 @@ export default function App() {
   const saveSettings = async (field: string, newValue: any) => {
       try {
           await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'winii_settings', 'global'), { [field]: newValue }, { merge: true });
-          // Optional: silent save without toast for better UX in "Google Forms" style
-          // showToast("設定已更新", 'success'); 
       } catch(e) { showToast("更新失敗", 'error'); }
   };
 
