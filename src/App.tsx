@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
-  Calendar, CheckCircle, Clock, User, Phone, FileText, PlusCircle, 
-  Lock, Unlock, LogOut, Instagram, Heart, Smile, X, Edit2, Save, Trash2, 
-  Wifi, WifiOff, RefreshCw, ChevronRight, ChevronLeft, ChevronDown, AlertCircle, Trash, Settings, List, AlertTriangle, Info, Copy, MessageSquare, DollarSign, StickyNote, MapPin, Share2, Tag, Star, Eye, RotateCcw, Download,
-  Check, HelpCircle, Mail, Camera, Sparkles, Pencil, Undo2, CalendarDays, Send, Bell, Plus, GripVertical, XCircle, MoreVertical, Ban, History
+  Calendar, CheckCircle, Clock, User, FileText, 
+  Lock, LogOut, Instagram, Heart, X, Trash2, 
+  RefreshCw, ChevronRight, ChevronLeft, ChevronDown, AlertCircle, Trash, Settings, List, AlertTriangle, Info, Copy, MessageSquare, DollarSign, StickyNote, MapPin, Share2, Star, Download,
+  Check, Sparkles, Pencil, Undo2, Bell, XCircle
 } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
